@@ -23,3 +23,10 @@ export enum Paths {
   EDU_TECH = "/edu-tech",
   HOTEL_BOOKING = "/hotel-booking",
 }
+
+export enum DateFilter {
+  LAST_7_DAYS = "Last 7 days",
+  LAST_30_DAYS = "Last 30 days",
+  THIS_MONTH = "This month",
+  THIS_YEAR = "This year",
+}

@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   width: 100vw;
@@ -14,22 +16,15 @@ body {
 }
 
 /* Hide submenu arrow in AntD */
-:where(.css-dev-only-do-not-override-1261szd).ant-menu-light .ant-menu-item,
-:where(.css-dev-only-do-not-override-1261szd).ant-menu-light
-  > .ant-menu
-  .ant-menu-item,
-:where(.css-dev-only-do-not-override-1261szd).ant-menu-light
-  .ant-menu-submenu-title,
-:where(.css-dev-only-do-not-override-1261szd).ant-menu-light
-  > .ant-menu
-  .ant-menu-submenu-title {
+.ant-menu-light .ant-menu-item,
+.ant-menu-light > .ant-menu .ant-menu-item,
+.ant-menu-light .ant-menu-submenu-title,
+.ant-menu-light > .ant-menu .ant-menu-submenu-title {
   color: #fff;
 }
 
-:where(.css-dev-only-do-not-override-1261szd).ant-menu-light
-  .ant-menu-submenu-selected
-  > .ant-menu-submenu-title,
-:where(.css-dev-only-do-not-override-1261szd).ant-menu-light
+.ant-menu-light .ant-menu-submenu-selected > .ant-menu-submenu-title,
+.ant-menu-light
   > .ant-menu
   .ant-menu-submenu-selected
   > .ant-menu-submenu-title {

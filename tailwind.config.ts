@@ -1,9 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
-      colors: {},
+      colors: {
+        yellow: "#F59E0B",
+      },
       fontWeight: {
         hairline: "100",
         thin: "200",
@@ -16,7 +21,10 @@ export default {
         black: "900",
       },
       fontSize: {},
-      padding: {},
+      padding: {
+        "30px": "30px",
+        "50px": "50px",
+      },
       height: {},
       width: {},
       maxHeight: {},
