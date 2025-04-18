@@ -1,9 +1,10 @@
-export default function App() {
-  return (
-    <div>
-      <h1 className="h-screen text-3xl flex items-center justify-center font-bold underline text-red-900">
-        Welocme to Speak Easy!
-      </h1>
-    </div>
-  );
-}
+import React from "react";
+import { useRoutes } from "react-router-dom";
+import routes from "./routes";
+
+const App: React.FC = () => {
+  const element = useRoutes(routes);
+  return element;
+};
+
+export default App;
