@@ -2,7 +2,7 @@ import React from "react";
 import { Layout, Menu } from "antd";
 import { DashboardOutlined, AppstoreOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
-import { AppRoutes, Paths, SidebarContants, SidebarKeys } from "@enums/index";
+import { AppRoutes, SidebarContants } from "@enums/index";
 import { TeamName } from "@constants/index";
 
 const { Sider } = Layout;
@@ -11,11 +11,26 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const selectedKey =
-    location.pathname === "/" ? AppRoutes.DASHBOARD : location.pathname;
+    location.pathname === "/" ? AppRoutes.DASHBOARD : AppRoutes.PRODUCTS;
 
   const sidebarBg = "#1E293B";
   const selectedBg = "#334155";
   const textColor = "#E0E7FF";
+
+  const menuItems = [
+    {
+      key: AppRoutes.DASHBOARD,
+      label: SidebarContants.DASHBOARD,
+      icon: <DashboardOutlined style={{ color: textColor }} />,
+      path: "/",
+    },
+    {
+      key: AppRoutes.PRODUCTS,
+      label: SidebarContants.Products,
+      icon: <AppstoreOutlined style={{ color: textColor }} />,
+      path: AppRoutes.PRODUCTS,
+    },
+  ];
 
   return (
     <Sider
@@ -42,44 +57,19 @@ const Sidebar: React.FC = () => {
           paddingTop: 30,
         }}
       >
-        <Menu.Item
-          key={SidebarKeys.DASHBOARD}
-          icon={<DashboardOutlined style={{ color: textColor }} />}
-          style={{
-            backgroundColor:
-              selectedKey === AppRoutes.DASHBOARD ? selectedBg : sidebarBg,
-            color: textColor,
-          }}
-        >
-          <Link to="/">{SidebarContants.DASHBOARD}</Link>
-        </Menu.Item>
-
-        <Menu.SubMenu
-          key={SidebarKeys.PRODUCTS}
-          icon={<AppstoreOutlined style={{ color: textColor }} />}
-          title={<span>{SidebarContants.Products}</span>}
-          style={{
-            backgroundColor: sidebarBg,
-            color: textColor,
-          }}
-        >
-          {[
-            { name: SidebarContants.TILICHO, path: Paths.TILICHO },
-            { name: SidebarContants.EDU_TECH, path: Paths.EDU_TECH },
-            { name: SidebarContants.HOTEL_BOOKING, path: Paths.HOTEL_BOOKING },
-          ].map((product) => (
-            <Menu.Item
-              key={product.path}
-              style={{
-                backgroundColor:
-                  selectedKey === product.path ? selectedBg : sidebarBg,
-                color: textColor,
-              }}
-            >
-              <Link to={product.path}>{product.name}</Link>
-            </Menu.Item>
-          ))}
-        </Menu.SubMenu>
+        {menuItems.map((item) => (
+          <Menu.Item
+            key={item.key}
+            icon={item.icon}
+            style={{
+              backgroundColor:
+                selectedKey === item.key ? selectedBg : sidebarBg,
+              color: textColor,
+            }}
+          >
+            <Link to={item.path}>{item.label}</Link>
+          </Menu.Item>
+        ))}
       </Menu>
     </Sider>
   );
