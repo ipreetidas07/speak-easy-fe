@@ -2,6 +2,7 @@ import { PhoneOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { Badge, Modal, Button, Input, Upload, message } from "antd";
 import type { UploadProps } from "antd";
 import { useState } from "react";
+import SessionList from './SessionList';
 
 export type PhoneNumber = {
   name: string;
@@ -19,6 +20,9 @@ type Props = {
 const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newContact, setNewContact] = useState({ name: "", phone: "" });
+  const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<PhoneNumber | null>(null);
+  const [selectedSessions, setSelectedSessions] = useState<any[]>([]);
 
   const handleAdd = () => {
     if (!newContact.name || !newContact.phone) {
@@ -118,7 +122,49 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
                 />
               </td>
               <td className="w-[80px]">
-                <PhoneOutlined style={{ color: "green" }} />
+                <PhoneOutlined 
+                  className="cursor-pointer hover:text-green-600 transition-colors"
+                  style={{ color: "green" }} 
+                  onClick={() => {
+                    // Mock sessions data - replace with actual data in production
+                    const mockSessions = [
+                      {
+                        id: '1',
+                        date: '2023-11-15',
+                        status: 'Completed',
+                        duration: '5:23',
+                        conversation: [
+                          {
+                            speaker: 'Agent',
+                            message: 'Hello! How can I help you today?',
+                            timestamp: '14:30:00'
+                          },
+                          {
+                            speaker: 'Customer',
+                            message: 'I\'m interested in your services',
+                            timestamp: '14:30:15'
+                          }
+                        ]
+                      },
+                      {
+                        id: '2',
+                        date: '2023-11-14',
+                        status: 'Failed',
+                        duration: '1:05',
+                        conversation: [
+                          {
+                            speaker: 'Agent',
+                            message: 'Good morning! How may I assist you?',
+                            timestamp: '10:15:00'
+                          }
+                        ]
+                      }
+                    ];
+                    setSelectedPhoneNumber(entry);
+                    setSelectedSessions(mockSessions);
+                    setIsSessionModalOpen(true);
+                  }}
+                />
               </td>
             </tr>
           ))}
@@ -149,6 +195,17 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
           />
         </div>
       </Modal>
+
+      {/* Sessions Modal */}
+      {selectedPhoneNumber && (
+        <SessionList
+          sessions={selectedSessions}
+          isOpen={isSessionModalOpen}
+          onClose={() => setIsSessionModalOpen(false)}
+          phoneNumber={selectedPhoneNumber.phone}
+          contactName={selectedPhoneNumber.name}
+        />
+      )}
     </div>
   );
 };
