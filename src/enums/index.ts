@@ -1,11 +1,13 @@
 export enum AppRoutes {
   DASHBOARD = "dashboard",
   PRODUCTS = "products",
+  TOPICS = "topics",
 }
 
 export enum SidebarContants {
   DASHBOARD = "Dashboard",
-  Products = "Products",
+  PRODUCTS = "Products",
+  TOPICS = "Topics",
 }
 
 export enum ProductsList {

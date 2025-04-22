@@ -2,12 +2,14 @@ import React from "react";
 
 type ProductCardProps = {
   name: string;
+  description?: string;
   isSelected: boolean;
   onSelect: () => void;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
   name,
+  description,
   isSelected,
   onSelect,
 }) => {
@@ -19,7 +21,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }`}
     >
       <h3 className="text-lg font-semibold">{name}</h3>
-      <p className="text-sm text-gray-500">Click to manage phone numbers</p>
+      {description ? (
+        <p className="text-sm text-gray-500 mt-1 line-clamp-2">{description}</p>
+      ) : (
+        <p className="text-sm text-gray-500 mt-1">Click to manage phone numbers</p>
+      )}
     </div>
   );
 };
