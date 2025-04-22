@@ -14,19 +14,3 @@ body {
   margin: 0;
   box-sizing: border-box;
 }
-
-/* Hide submenu arrow in AntD */
-.ant-menu-light .ant-menu-item,
-.ant-menu-light > .ant-menu .ant-menu-item,
-.ant-menu-light .ant-menu-submenu-title,
-.ant-menu-light > .ant-menu .ant-menu-submenu-title {
-  color: #fff;
-}
-
-.ant-menu-light .ant-menu-submenu-selected > .ant-menu-submenu-title,
-.ant-menu-light
-  > .ant-menu
-  .ant-menu-submenu-selected
-  > .ant-menu-submenu-title {
-  color: #fff;
-}

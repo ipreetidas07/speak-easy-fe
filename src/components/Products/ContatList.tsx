@@ -1,24 +1,49 @@
 import { PhoneOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { Badge, Modal, Button, Input, Upload, message } from "antd";
+import { Badge, Modal, Button, Input, Upload, message, Tooltip } from "antd";
 import type { UploadProps } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ProductsList } from "@enums/index";
 
 type PhoneNumber = {
   name: string;
   phone: string;
   date: string;
   status: "New" | "Called";
+  pitch?: string;
 };
 
 type Props = {
   numbers: PhoneNumber[];
   onAdd: (entry: PhoneNumber) => void;
   onUpload: (entries: PhoneNumber[]) => void;
+  selectedProduct: string;
 };
 
-const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
+const defaultPitchPerProduct: Record<string, string> = {
+  [ProductsList.TILICHO]:
+    "At Tilicho Labs, we transform your ideas into exceptional digital products. Our expert team specializes in mobile and web development, delivering scalable and innovative solutions tailored to your business needs.",
+  [ProductsList.HOTEL_BOOKING]:
+    "Welcome to Hotel Booking. We provide the best deals!",
+  [ProductsList.EDU_TECH]:
+    "Hello from Edu Tech! Let us help you with your learning goals.",
+};
+
+const ContactList: React.FC<Props> = ({
+  numbers,
+  onAdd,
+  onUpload,
+  selectedProduct,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newContact, setNewContact] = useState({ name: "", phone: "" });
+  const [productPitches, setProductPitches] = useState(defaultPitchPerProduct);
+  const [editedPitch, setEditedPitch] = useState(
+    productPitches[selectedProduct]
+  );
+
+  useEffect(() => {
+    setEditedPitch(productPitches[selectedProduct]);
+  }, [selectedProduct, productPitches]);
 
   const handleAdd = () => {
     if (!newContact.name || !newContact.phone) {
@@ -30,6 +55,7 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
       ...newContact,
       date: new Date().toISOString().slice(0, 10),
       status: "New",
+      pitch: productPitches[selectedProduct],
     };
 
     onAdd(entry);
@@ -55,6 +81,7 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
           phone: phone.trim(),
           date: new Date().toISOString().slice(0, 10),
           status: "New",
+          pitch: productPitches[selectedProduct],
         };
       });
 
@@ -68,10 +95,45 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
     }
   };
 
+  const handlePitchChange = (value: string) => {
+    setEditedPitch(value);
+  };
+
+  const handleSavePitch = () => {
+    setProductPitches({
+      ...productPitches,
+      [selectedProduct]: editedPitch,
+    });
+    message.success("Pitch updated successfully");
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mt-4">
+      <div className="mb-6">
+        <label className="block text-gray-600 font-medium mb-1 text-lg">
+          Default Pitch for {selectedProduct}
+        </label>
+        <div className="flex items-center gap-2">
+          <Input.TextArea
+            value={editedPitch}
+            onChange={(e) => handlePitchChange(e.target.value)}
+            autoSize={{ minRows: 2, maxRows: 4 }}
+            placeholder="Enter the default pitch for this product"
+            className="w-full mb-2"
+            style={{ borderColor: "#334155" }}
+          />
+          <Button
+            type="primary"
+            onClick={handleSavePitch}
+            style={{ backgroundColor: "#334155", color: "white" }}
+          >
+            Save Pitch
+          </Button>
+        </div>
+      </div>
+
       <div className="flex justify-between mb-4">
-        <h2 className="text-md font-semibold">Upload Phone Numbers</h2>
+        <h2 className="text-lg font-semibold">Upload Phone Numbers</h2>
         <div className="flex gap-2">
           <Button
             icon={<PlusOutlined />}
@@ -98,27 +160,34 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
       <table className="w-full text-sm table-fixed">
         <thead>
           <tr className="text-left text-gray-500 border-b">
-            <th className="py-2 w-[180px]">Name</th>
-            <th className="w-[160px]">Phone Number</th>
-            <th className="w-[140px]">Upload Date</th>
-            <th className="w-[120px]">Status</th>
-            <th className="w-[80px]">Actions</th>
+            <th className="py-2 w-[160px]">Name</th>
+            <th className="w-[140px]">Phone Number</th>
+            <th className="w-[120px]">Upload Date</th>
+            <th className="w-[100px]">Status</th>
+            <th className="w-[320px]">Pitch</th>
+            <th className="w-[50px] text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody>
           {numbers.map((entry, idx) => (
             <tr key={idx} className="border-b hover:bg-gray-50">
-              <td className="py-2 w-[180px] truncate">{entry.name}</td>
-              <td className="w-[160px] truncate">{entry.phone}</td>
-              <td className="w-[140px] truncate">{entry.date}</td>
-              <td className="w-[120px]">
+              <td className="py-2 truncate">{entry.name}</td>
+              <td className="truncate">{entry.phone}</td>
+              <td className="truncate">{entry.date}</td>
+              <td>
                 <Badge
                   status={entry.status === "New" ? "processing" : "default"}
                   text={entry.status}
                 />
               </td>
-              <td className="w-[80px]">
-                <PhoneOutlined style={{ color: "green" }} />
+              <td className="truncate">
+                {entry.pitch || productPitches[selectedProduct]}
+              </td>
+              <td className="text-center">
+                <Tooltip title="Call">
+                  <PhoneOutlined style={{ color: "green" }} />
+                </Tooltip>
               </td>
             </tr>
           ))}
@@ -139,6 +208,7 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
             onChange={(e) =>
               setNewContact({ ...newContact, name: e.target.value })
             }
+            style={{ borderColor: "#334155" }}
           />
           <Input
             placeholder="Phone"
@@ -146,6 +216,7 @@ const ContactList: React.FC<Props> = ({ numbers, onAdd, onUpload }) => {
             onChange={(e) =>
               setNewContact({ ...newContact, phone: e.target.value })
             }
+            style={{ borderColor: "#334155" }}
           />
         </div>
       </Modal>

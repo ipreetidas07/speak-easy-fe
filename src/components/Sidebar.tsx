@@ -21,13 +21,15 @@ const Sidebar: React.FC = () => {
     {
       key: AppRoutes.DASHBOARD,
       label: SidebarContants.DASHBOARD,
-      icon: <DashboardOutlined style={{ color: textColor }} />,
+      icon: (
+        <DashboardOutlined style={{ color: textColor, fontSize: "18px" }} />
+      ),
       path: "/",
     },
     {
       key: AppRoutes.PRODUCTS,
       label: SidebarContants.Products,
-      icon: <AppstoreOutlined style={{ color: textColor }} />,
+      icon: <AppstoreOutlined style={{ color: textColor, fontSize: "18px" }} />,
       path: AppRoutes.PRODUCTS,
     },
   ];
@@ -42,9 +44,10 @@ const Sidebar: React.FC = () => {
         paddingTop: 10,
         paddingLeft: 10,
         paddingRight: 10,
+        fontFamily: "monospace",
       }}
     >
-      <div className="text-white text-2xl text-center font-semibold">
+      <div className="text-white text-3xl text-center font-semibold">
         {TeamName}
       </div>
 
@@ -55,6 +58,7 @@ const Sidebar: React.FC = () => {
           backgroundColor: sidebarBg,
           color: textColor,
           paddingTop: 30,
+          fontFamily: "monospace",
         }}
       >
         {menuItems.map((item) => (

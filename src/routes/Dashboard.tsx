@@ -1,9 +1,3 @@
-import {
-  PhoneOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ClockCircleOutlined,
-} from "@ant-design/icons";
 import { Components } from "@components/index";
 
 const Dashboard = () => {
@@ -12,37 +6,21 @@ const Dashboard = () => {
       title: "Total Calls",
       value: "1,234",
       change: "+12% from last month",
-      changeColor: "text-green-600",
-      borderColor: "border-blue-500",
-      icon: PhoneOutlined,
-      iconColor: "text-indigo-400",
     },
     {
       title: "Success Rate",
       value: "85%",
       change: "+5% from last month",
-      changeColor: "text-green-600",
-      borderColor: "border-green-500",
-      icon: CheckCircleOutlined,
-      iconColor: "text-green-500",
     },
     {
       title: "Failed Calls",
       value: "185",
       change: "-3% from last month",
-      changeColor: "text-red-500",
-      borderColor: "border-red-500",
-      icon: CloseCircleOutlined,
-      iconColor: "text-red-400",
     },
     {
       title: "Avg. Duration",
       value: "4m 30s",
       change: "+30s from last month",
-      changeColor: "text-green-600",
-      borderColor: "border-purple-500",
-      icon: ClockCircleOutlined,
-      iconColor: "text-purple-500",
     },
   ];
 
@@ -75,7 +53,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="">
+    <div>
       <Components.Header />
       <div className="flex justify-around p-4">
         {stats.map((stat, index) => (

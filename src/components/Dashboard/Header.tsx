@@ -1,4 +1,4 @@
-import { DateFilter, SidebarContants } from "@enums/index";
+import { DateFilter, ProductsList } from "@enums/index";
 
 const Header = () => {
   return (
@@ -13,9 +13,9 @@ const Header = () => {
         </select>
         <select className="border rounded-md px-4 py-1 text-sm text-gray-700 shadow-sm bg-white">
           <option>All Products</option>
-          <option>{SidebarContants.TILICHO}</option>
-          <option>{SidebarContants.HOTEL_BOOKING}</option>
-          <option>{SidebarContants.EDU_TECH}</option>
+          <option>{ProductsList.TILICHO}</option>
+          <option>{ProductsList.HOTEL_BOOKING}</option>
+          <option>{ProductsList.EDU_TECH}</option>
         </select>
       </div>
     </div>

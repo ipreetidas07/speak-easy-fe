@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import StatCard from "./Dashboard/StatCard";
 import ContactList from "./Products/ContatList";
 import ProductCard from "./Products/ProductCard";
+import { RecentActivities } from "./Products/RecentActivities";
 
 export const Components = {
   Header,
@@ -12,4 +13,5 @@ export const Components = {
   Sidebar,
   ContactList,
   ProductCard,
+  RecentActivities,
 };

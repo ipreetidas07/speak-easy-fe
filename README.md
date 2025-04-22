@@ -18,8 +18,3 @@ Frontend for the **Speak Easy** project — an AI-powered voice assistant for sm
 - **Preeti Das**
 - **Sadaram Jayasri**
 - **Bharath Kandula**
-
-```
-
-
-```

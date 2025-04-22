@@ -45,7 +45,7 @@ const SalesChart: React.FC<ChartsProps> = ({ pieCharts, lineCharts }) => {
       {/* Pie Charts */}
       {pieCharts.map((chart, index) => (
         <div key={`pie-${index}`} className="bg-white p-4 rounded-xl shadow-sm">
-          <h2 className="text-lg font-medium mb-4">{chart.title}</h2>
+          <h2 className="text-xl font-bold mb-4">{chart.title}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -76,7 +76,7 @@ const SalesChart: React.FC<ChartsProps> = ({ pieCharts, lineCharts }) => {
           key={`line-${index}`}
           className="bg-white p-4 rounded-xl shadow-sm"
         >
-          <h2 className="text-lg font-medium mb-4">{chart.title}</h2>
+          <h2 className="text-xl font-bold mb-4">{chart.title}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chart.data}>
               <CartesianGrid strokeDasharray="3 3" />
