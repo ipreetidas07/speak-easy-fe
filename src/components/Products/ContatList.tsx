@@ -1,8 +1,14 @@
-import { PhoneOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  EyeOutlined,
+  PhoneOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { Badge, Modal, Button, Input, Upload, message, Tooltip } from "antd";
 import type { UploadProps } from "antd";
 import { useState, useEffect } from "react";
 import { ProductsList } from "@enums/index";
+import SessionList from "./SessionList";
 
 type PhoneNumber = {
   name: string;
@@ -40,6 +46,10 @@ const ContactList: React.FC<Props> = ({
   const [editedPitch, setEditedPitch] = useState(
     productPitches[selectedProduct]
   );
+  const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
+  const [selectedPhoneNumber, setSelectedPhoneNumber] =
+    useState<PhoneNumber | null>(null);
+  const [selectedSessions, setSelectedSessions] = useState<any[]>([]);
 
   useEffect(() => {
     setEditedPitch(productPitches[selectedProduct]);
@@ -186,7 +196,60 @@ const ContactList: React.FC<Props> = ({
               </td>
               <td className="text-center">
                 <Tooltip title="Call">
-                  <PhoneOutlined style={{ color: "green" }} />
+                  <PhoneOutlined
+                    className="cursor-pointer mr-3"
+                    style={{ color: "green" }}
+                    onClick={() => {
+                      message.info(`Calling ${entry.phone}...`);
+                    }}
+                  />
+                </Tooltip>
+
+                <Tooltip title="View Sessions">
+                  <EyeOutlined
+                    className="cursor-pointer"
+                    style={{ color: "#1d4ed8" }}
+                    onClick={() => {
+                      // Mock sessions data - replace with actual data in production
+                      const mockSessions = [
+                        {
+                          id: "1",
+                          date: "2023-11-15",
+                          status: "Completed",
+                          duration: "5:23",
+                          conversation: [
+                            {
+                              speaker: "Agent",
+                              message: "Hello! How can I help you today?",
+                              timestamp: "14:30:00",
+                            },
+                            {
+                              speaker: "Customer",
+                              message: "I'm interested in your services",
+                              timestamp: "14:30:15",
+                            },
+                          ],
+                        },
+                        {
+                          id: "2",
+                          date: "2023-11-14",
+                          status: "Failed",
+                          duration: "1:05",
+                          conversation: [
+                            {
+                              speaker: "Agent",
+                              message: "Good morning! How may I assist you?",
+                              timestamp: "10:15:00",
+                            },
+                          ],
+                        },
+                      ];
+
+                      setSelectedPhoneNumber(entry);
+                      setSelectedSessions(mockSessions);
+                      setIsSessionModalOpen(true);
+                    }}
+                  />
                 </Tooltip>
               </td>
             </tr>
@@ -220,6 +283,18 @@ const ContactList: React.FC<Props> = ({
           />
         </div>
       </Modal>
+
+      {/* Sessions Modal */}
+
+      {selectedPhoneNumber && (
+        <SessionList
+          sessions={selectedSessions}
+          isOpen={isSessionModalOpen}
+          onClose={() => setIsSessionModalOpen(false)}
+          phoneNumber={selectedPhoneNumber.phone}
+          contactName={selectedPhoneNumber.name}
+        />
+      )}
     </div>
   );
 };

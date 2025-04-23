@@ -3,7 +3,6 @@ import { Layout, Menu } from "antd";
 import { DashboardOutlined, AppstoreOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { AppRoutes, SidebarContants } from "@enums/index";
-import { BookOutlined } from "@ant-design/icons";
 import { TeamName } from "@constants/index";
 
 const { Sider } = Layout;
@@ -14,9 +13,8 @@ const Sidebar: React.FC = () => {
   const pathToKey: { [key: string]: AppRoutes } = {
     "/": AppRoutes.DASHBOARD,
     "/products": AppRoutes.PRODUCTS,
-    "/topics": AppRoutes.TOPICS
   };
-  
+
   const selectedKey = pathToKey[location.pathname] || AppRoutes.DASHBOARD;
 
   const sidebarBg = "#1E293B";
@@ -37,12 +35,6 @@ const Sidebar: React.FC = () => {
       label: SidebarContants.PRODUCTS,
       icon: <AppstoreOutlined style={{ color: textColor, fontSize: "18px" }} />,
       path: AppRoutes.PRODUCTS,
-    },
-    {
-      key: AppRoutes.TOPICS,
-      label: SidebarContants.TOPICS,
-      icon: <BookOutlined style={{ color: textColor }} />,
-      path: AppRoutes.TOPICS,
     },
   ];
 
