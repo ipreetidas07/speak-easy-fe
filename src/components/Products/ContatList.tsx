@@ -9,6 +9,7 @@ import type { UploadProps } from "antd";
 import { useState, useEffect } from "react";
 import { ProductsList } from "@enums/index";
 import SessionList from "./SessionList";
+import { CallStatus, CallType } from "./CallStatus";
 
 type PhoneNumber = {
   name: string;
@@ -50,7 +51,41 @@ const ContactList: React.FC<Props> = ({
   const [selectedPhoneNumber, setSelectedPhoneNumber] =
     useState<PhoneNumber | null>(null);
   const [selectedSessions, setSelectedSessions] = useState<any[]>([]);
+  const [currentCall, setCurrentCall] = useState<{
+    name: string;
+    phone: string;
+    status: CallType;
+  } | null>(null);
 
+  useEffect(() => {
+    if (!currentCall) return;
+
+    const timers: NodeJS.Timeout[] = [];
+
+    if (currentCall.status === "initiated") {
+      const timer = setTimeout(() => {
+        setCurrentCall((prev) =>
+          prev ? { ...prev, status: "ongoing" } : null
+        );
+      }, 2000);
+      timers.push(timer);
+    }
+
+    if (currentCall.status === "ongoing") {
+      const timer = setTimeout(() => {
+        // Randomly choose between declined or not answered
+        const finalStatus = Math.random() > 0.5 ? "declined" : "not answered";
+        setCurrentCall((prev) =>
+          prev ? { ...prev, status: finalStatus } : null
+        );
+      }, 4000); // 2 seconds after ongoing starts (total 4 seconds from initiation)
+      timers.push(timer);
+    }
+
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+    };
+  }, [currentCall]);
   useEffect(() => {
     setEditedPitch(productPitches[selectedProduct]);
   }, [selectedProduct, productPitches]);
@@ -200,7 +235,12 @@ const ContactList: React.FC<Props> = ({
                     className="cursor-pointer mr-3"
                     style={{ color: "green" }}
                     onClick={() => {
-                      message.info(`Calling ${entry.phone}...`);
+                      // Start the call flow
+                      setCurrentCall({
+                        name: entry.name,
+                        phone: entry.phone,
+                        status: "initiated",
+                      });
                     }}
                   />
                 </Tooltip>
@@ -293,6 +333,15 @@ const ContactList: React.FC<Props> = ({
           onClose={() => setIsSessionModalOpen(false)}
           phoneNumber={selectedPhoneNumber.phone}
           contactName={selectedPhoneNumber.name}
+        />
+      )}
+
+      {currentCall && (
+        <CallStatus
+          name={currentCall.name}
+          phone={currentCall.phone}
+          callType={currentCall.status}
+          onClose={() => setCurrentCall(null)}
         />
       )}
     </div>

@@ -1,4 +1,4 @@
-import { Modal, List, Typography, Button } from "antd";
+import { Modal, List, Typography } from "antd";
 import { useState } from "react";
 
 type Session = {
