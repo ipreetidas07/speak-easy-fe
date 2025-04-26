@@ -74,7 +74,7 @@ export const RecentActivities = ({
           {filteredActivities.map((activity, index) => (
             <li
               key={index}
-              className="flex justify-between items-center py-2 border-b"
+              className="flex justify-between items-center py-2 border-b pr-6"
             >
               <div className="flex items-start gap-3">
                 <div className="mt-1">
@@ -83,7 +83,7 @@ export const RecentActivities = ({
                 <div>
                   <p className="font-medium">{activity.title}</p>
                   <p className="text-sm text-gray-500">
-                    {activity.description}
+                    {activity.description} - {activity.number}
                   </p>
                 </div>
               </div>

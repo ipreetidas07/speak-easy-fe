@@ -22,12 +22,12 @@ type LineChartPoint = {
   [key: string]: string | number;
 };
 
-type PieChartProps = {
+export type PieChartProps = {
   title: string;
   data: PieChartData[];
 };
 
-type LineChartProps = {
+export type LineChartProps = {
   title: string;
   data: LineChartPoint[];
   dataKey: string;

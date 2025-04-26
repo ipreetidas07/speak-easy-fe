@@ -6,11 +6,11 @@ import {
   ClockCircleOutlined,
 } from "@ant-design/icons";
 
-interface StatCardProps {
+export type StatCardProps = {
   title: string;
   value: string;
   change: string;
-}
+};
 
 const configMap: {
   [key: string]: {

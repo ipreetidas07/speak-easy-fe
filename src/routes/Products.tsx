@@ -186,8 +186,17 @@ const Products = () => {
     <div className="p-6">
       {isAddProductModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 pl-48">
-          <div className="bg-white shadow-2xl rounded-lg p-8 w-[600px] max-w-full flex flex-col items-center">
+          <div className="relative bg-white shadow-2xl rounded-lg p-8 w-[600px] max-w-full flex flex-col">
+            {/* Close Icon */}
+            <button
+              onClick={() => setIsAddProductModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ×
+            </button>
+
             <h2 className="text-2xl font-semibold mb-4">Add Product</h2>
+
             <input
               value={newProductName}
               onChange={(e) => setNewProductName(e.target.value)}
@@ -200,12 +209,14 @@ const Products = () => {
               placeholder="Enter product description"
               className="border p-2 w-full rounded mb-6"
             />
-            <button
-              onClick={handleAddProduct}
-              className="bg-[#1E293B] text-white px-6 py-2 rounded hover:bg-[#0f172a]"
-            >
-              Add Product
-            </button>
+            <div className="flex justify-center">
+              <button
+                onClick={handleAddProduct}
+                className="bg-[#1E293B] text-white px-6 py-2 rounded hover:bg-[#0f172a]"
+              >
+                Add Product
+              </button>
+            </div>
           </div>
         </div>
       )}

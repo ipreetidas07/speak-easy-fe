@@ -14,3 +14,11 @@ body {
   margin: 0;
   box-sizing: border-box;
 }
+
+.ant-btn-variant-solid {
+  background: #1e293b;
+}
+
+.ant-btn-variant-solid:not(:disabled):not(.ant-btn-disabled):hover {
+  background: #1e293b;
+}

@@ -49,7 +49,7 @@ const SessionList: React.FC<Props> = ({
           <div className="flex items-center gap-2">
             <span
               onClick={handleBackToSessions}
-              className="cursor-pointer text-blue-600 hover:underline"
+              className="cursor-pointer text-[#1e293b] text-2xl"
             >
               ←
             </span>
@@ -75,7 +75,7 @@ const SessionList: React.FC<Props> = ({
               >
                 <List.Item.Meta
                   title={
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center pr-5">
                       <span>Session {session.id}</span>
                       <Typography.Text
                         type={
@@ -91,7 +91,7 @@ const SessionList: React.FC<Props> = ({
                     </div>
                   }
                   description={
-                    <div className="flex justify-between text-sm text-gray-500">
+                    <div className="flex justify-between text-sm text-gray-500 pr-5">
                       <span>{session.date}</span>
                       <span>Duration: {session.duration}</span>
                     </div>

@@ -1,5 +1,5 @@
 export const TEST_ROUTES = {
-  DaASHBOARD_OVERVIEW: "api/admin/dashboard", //GET
+  DASHBOARD_OVERVIEW: "api/admin/dashboard", //GET
   ADD_CONTACT: "/api/phone-numbers", // POST
   UPLOAD_CONTACTS: "/api/products/:productId/contacts/upload", // POST (CSV)
   SESSIONS: "/api/contacts/:contactId/sessions", // GET
