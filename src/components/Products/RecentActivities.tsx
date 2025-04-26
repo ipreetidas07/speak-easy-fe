@@ -8,7 +8,7 @@ export type ActivityType = {
   title: string;
   description: string;
   time: string;
-  type: "success" | "no_answer" | "reschedule" | "failed";
+  type: string;
   number: string;
 };
 
@@ -18,14 +18,14 @@ export const RecentActivities = ({
   activities: ActivityType[];
 }) => {
   const iconMap = {
-    success: <PhoneOutlined style={{ color: "#52c41a", fontSize: "20px" }} />, // Green
-    no_answer: (
+    completed: <PhoneOutlined style={{ color: "#52c41a", fontSize: "20px" }} />,
+    "no-answer": (
       <CloseCircleOutlined style={{ color: "#ff4d4f", fontSize: "20px" }} />
-    ), // Red
+    ),
     reschedule: (
       <ClockCircleOutlined style={{ color: "#faad14", fontSize: "20px" }} />
-    ), // Yellow-orange
-    failed: (
+    ),
+    busy: (
       <span
         style={{
           position: "relative",
@@ -51,30 +51,65 @@ export const RecentActivities = ({
     ),
   };
 
-  if (!activities || activities.length === 0) return null;
+  const validStatuses = ["completed", "no-answer", "busy"];
+
+  // Filter and Sort
+  const filteredActivities = activities
+    .filter((activity) => validStatuses.includes(activity.type))
+    .sort((a, b) => {
+      const timeA = new Date(`1970-01-01T${convertTo24Hour(a.time)}`);
+      const timeB = new Date(`1970-01-01T${convertTo24Hour(b.time)}`);
+      return timeB.getTime() - timeA.getTime();
+    })
+    .slice(0, 5);
+
+  if (!filteredActivities.length) return null;
 
   return (
-    <div className="mt-8 bg-white rounded-lg p-4 shadow">
+    <div className="mt-5 bg-white rounded-lg p-4 shadow">
       <h3 className="text-lg font-semibold mb-4">Recent Activities</h3>
-      <ul>
-        {activities.map((activity, index) => (
-          <li
-            key={index}
-            className="flex justify-between items-center py-2 border-b"
-          >
-            <div className="flex items-start gap-3">
-              <div className="mt-1">{iconMap[activity.type]}</div>
-              <div>
-                <p className="font-medium">{activity.title}</p>
-                <p className="text-sm text-gray-500">
-                  {activity.description} - {activity.number}
-                </p>
+
+      <div className="max-h-24 overflow-y-auto pr-2">
+        <ul>
+          {filteredActivities.map((activity, index) => (
+            <li
+              key={index}
+              className="flex justify-between items-center py-2 border-b"
+            >
+              <div className="flex items-start gap-3">
+                <div className="mt-1">
+                  {iconMap[activity.type as keyof typeof iconMap]}
+                </div>
+                <div>
+                  <p className="font-medium">{activity.title}</p>
+                  <p className="text-sm text-gray-500">
+                    {activity.description}
+                  </p>
+                </div>
               </div>
-            </div>
-            <span className="text-sm text-gray-400">{activity.time}</span>
-          </li>
-        ))}
-      </ul>
+              <span className="text-sm text-gray-400">{activity.time}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
+
+// Helper function to convert 12h to 24h format
+function convertTo24Hour(timeStr: string) {
+  const [time, modifier] = timeStr.split(" ");
+  let [hours, minutes, seconds] = time.split(":").map(Number);
+
+  if (modifier === "PM" && hours !== 12) {
+    hours += 12;
+  }
+  if (modifier === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  // Pad 0 for single digits
+  const pad = (n: number) => (n < 10 ? "0" + n : n);
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}

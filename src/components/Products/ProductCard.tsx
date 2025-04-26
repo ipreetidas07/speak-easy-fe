@@ -21,10 +21,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }`}
     >
       <h3 className="text-lg font-semibold">{name}</h3>
-      {description ? (
+      {description && (
         <p className="text-sm text-gray-500 mt-1 line-clamp-2">{description}</p>
-      ) : (
-        <p className="text-sm text-gray-500 mt-1">Click to manage phone numbers</p>
       )}
     </div>
   );

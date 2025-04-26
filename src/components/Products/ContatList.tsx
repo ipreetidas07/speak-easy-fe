@@ -1,52 +1,42 @@
-import {
-  EyeOutlined,
-  PhoneOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import { Badge, Modal, Button, Input, Upload, message, Tooltip } from "antd";
-import type { UploadProps } from "antd";
+import { EyeOutlined, PhoneOutlined, PlusOutlined } from "@ant-design/icons";
+import { Badge, Modal, Button, Input, message, Tooltip } from "antd";
 import { useState, useEffect } from "react";
-import { ProductsList } from "@enums/index";
 import SessionList from "./SessionList";
 import { CallStatus, CallType } from "./CallStatus";
+import { TEST_ROUTES } from "../../api/routes/test.routes";
+import apiClient from "../../api/apiClient";
 
-type PhoneNumber = {
+export type PhoneNumber = {
+  updatedAt?: string | number | Date;
   name: string;
-  phone: string;
-  date: string;
-  status: "New" | "Called";
+  phoneNumber: string;
+  createdAt: string;
+  status: string;
   pitch?: string;
 };
 
 type Props = {
   numbers: PhoneNumber[];
   onAdd: (entry: PhoneNumber) => void;
-  onUpload: (entries: PhoneNumber[]) => void;
+  // onUpload: (entries: PhoneNumber[]) => void;
   selectedProduct: string;
-};
-
-const defaultPitchPerProduct: Record<string, string> = {
-  [ProductsList.TILICHO]:
-    "At Tilicho Labs, we transform your ideas into exceptional digital products. Our expert team specializes in mobile and web development, delivering scalable and innovative solutions tailored to your business needs.",
-  [ProductsList.HOTEL_BOOKING]:
-    "Welcome to Hotel Booking. We provide the best deals!",
-  [ProductsList.EDU_TECH]:
-    "Hello from Edu Tech! Let us help you with your learning goals.",
+  defaultPitchPerProduct?: string | undefined;
+  onSavePitch: (pitch: string) => void; // <- new callback
+  callInitiated: () => void; // <- new callback
 };
 
 const ContactList: React.FC<Props> = ({
   numbers,
   onAdd,
-  onUpload,
+  // onUpload,
   selectedProduct,
+  defaultPitchPerProduct,
+  onSavePitch,
+  callInitiated,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newContact, setNewContact] = useState({ name: "", phone: "" });
-  const [productPitches, setProductPitches] = useState(defaultPitchPerProduct);
-  const [editedPitch, setEditedPitch] = useState(
-    productPitches[selectedProduct]
-  );
+  const [newContact, setNewContact] = useState({ name: "", phoneNumber: "" });
+  const [editedPitch, setEditedPitch] = useState(defaultPitchPerProduct || "");
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
   const [selectedPhoneNumber, setSelectedPhoneNumber] =
     useState<PhoneNumber | null>(null);
@@ -55,101 +45,173 @@ const ContactList: React.FC<Props> = ({
     name: string;
     phone: string;
     status: CallType;
+    duration: string;
   } | null>(null);
 
   useEffect(() => {
-    if (!currentCall) return;
-
-    const timers: NodeJS.Timeout[] = [];
-
-    if (currentCall.status === "initiated") {
-      const timer = setTimeout(() => {
-        setCurrentCall((prev) =>
-          prev ? { ...prev, status: "ongoing" } : null
-        );
-      }, 2000);
-      timers.push(timer);
-    }
-
-    if (currentCall.status === "ongoing") {
-      const timer = setTimeout(() => {
-        // Randomly choose between declined or not answered
-        const finalStatus = Math.random() > 0.5 ? "declined" : "not answered";
-        setCurrentCall((prev) =>
-          prev ? { ...prev, status: finalStatus } : null
-        );
-      }, 4000); // 2 seconds after ongoing starts (total 4 seconds from initiation)
-      timers.push(timer);
-    }
-
-    return () => {
-      timers.forEach((timer) => clearTimeout(timer));
-    };
-  }, [currentCall]);
-  useEffect(() => {
-    setEditedPitch(productPitches[selectedProduct]);
-  }, [selectedProduct, productPitches]);
+    setEditedPitch(defaultPitchPerProduct || "");
+  }, [defaultPitchPerProduct]);
 
   const handleAdd = () => {
-    if (!newContact.name || !newContact.phone) {
+    if (!newContact.name || !newContact.phoneNumber) {
       message.warning("Please enter both name and phone number");
       return;
     }
 
     const entry: PhoneNumber = {
       ...newContact,
-      date: new Date().toISOString().slice(0, 10),
+      createdAt: new Date().toISOString().slice(0, 10),
       status: "New",
-      pitch: productPitches[selectedProduct],
+      pitch: "",
     };
 
     onAdd(entry);
-    setNewContact({ name: "", phone: "" });
+    setNewContact({ name: "", phoneNumber: "" });
     setIsModalOpen(false);
   };
 
-  const handleCSVUpload: UploadProps["customRequest"] = async ({
-    file,
-    onSuccess,
-    onError,
-  }) => {
-    try {
-      const text = await (file as File).text();
-      const rows = text
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean);
-      const newEntries: PhoneNumber[] = rows.map((row) => {
-        const [name, phone] = row.split(",");
-        return {
-          name: name.trim(),
-          phone: phone.trim(),
-          date: new Date().toISOString().slice(0, 10),
-          status: "New",
-          pitch: productPitches[selectedProduct],
-        };
-      });
+  // const handleCSVUpload: UploadProps["customRequest"] = async ({
+  //   file,
+  //   onSuccess,
+  //   onError,
+  // }) => {
+  //   try {
+  //     const text = await (file as File).text();
+  //     const rows = text
+  //       .split("\n")
+  //       .map((line) => line.trim())
+  //       .filter(Boolean);
+  //     const newEntries: PhoneNumber[] = rows.map((row) => {
+  //       const [name, phoneNumber] = row.split(",");
+  //       return {
+  //         name: name.trim(),
+  //         phoneNumber: phoneNumber.trim(),
+  //         createdAt: new Date().toISOString().slice(0, 10),
+  //         status: "New",
+  //         pitch: "",
+  //       };
+  //     });
 
-      onUpload(newEntries);
-      message.success("Contacts uploaded successfully");
-      onSuccess?.(undefined, {} as any);
-    } catch (err) {
-      console.error(err);
-      message.error("Upload failed");
-      onError?.(new Error("Upload failed"));
-    }
-  };
+  //     onUpload(newEntries);
+  //     message.success("Contacts uploaded successfully");
+  //     onSuccess?.(undefined, {} as any);
+  //   } catch (err) {
+  //     console.error(err);
+  //     message.error("Upload failed");
+  //     onError?.(new Error("Upload failed"));
+  //   }
+  // };
 
   const handlePitchChange = (value: string) => {
     setEditedPitch(value);
   };
 
   const handleSavePitch = () => {
-    setProductPitches({
-      ...productPitches,
-      [selectedProduct]: editedPitch,
-    });
+    if (editedPitch.trim() === "") {
+      message.warning("Pitch cannot be empty");
+      return;
+    }
+
+    onSavePitch(editedPitch); // <- inform parent
     message.success("Pitch updated successfully");
+  };
+
+  const FINAL_STATUSES = ["completed", "no-answer", "busy"];
+
+  const initiateCall = async (entry: PhoneNumber) => {
+    try {
+      setCurrentCall({
+        name: entry.name,
+        phone: entry.phoneNumber,
+        status: "initiated",
+        duration: "0+",
+      });
+
+      const response = await apiClient.post(TEST_ROUTES.MAKE_CALL, {
+        phoneNumber: entry.phoneNumber,
+        message: "Hello, this is your AI assistant!",
+      });
+
+      if (response.status === 200) {
+        const callSid = response.data.callSid;
+
+        const pollStatus = async () => {
+          try {
+            const statusRes = await apiClient.get(
+              `${TEST_ROUTES.CALL_STATUS}?callSid=${callSid}`
+            );
+
+            if (statusRes.status === 200 && statusRes.data.success) {
+              const { status, name, phoneNumber, duration } = statusRes.data;
+
+              setCurrentCall({
+                name,
+                phone: phoneNumber,
+                status,
+                duration,
+              });
+
+              if (!FINAL_STATUSES.includes(status)) {
+                setTimeout(pollStatus, 1000);
+              }
+
+              callInitiated();
+            } else {
+              console.error("Error fetching call status", statusRes.status);
+            }
+          } catch (err) {
+            console.error("Polling error:", err);
+          }
+        };
+
+        setTimeout(pollStatus, 1000);
+      } else {
+        console.error("Unexpected response status:", response.status);
+      }
+    } catch (err) {
+      console.error("Error making the call:", err);
+      message.error("Failed to initiate the call");
+    }
+  };
+
+  const handleGetSessions = async (phoneNumber: string) => {
+    try {
+      const statusRes = await apiClient.get(TEST_ROUTES.GET_SESSIONS);
+      console.log(statusRes);
+      if (statusRes.status === 200) {
+        const sessions = statusRes.data; // your array
+
+        const filteredSessions = sessions.filter(
+          (session: any) => session.phoneNumber === phoneNumber
+        );
+
+        const formattedSessions = filteredSessions.map((session: any) => ({
+          id: session._id,
+          date: new Date(session.createdAt).toISOString().split("T")[0], // YYYY-MM-DD
+          status:
+            session.status.charAt(0).toUpperCase() + session.status.slice(1), // capitalize
+          duration: formatDuration(session.duration), // we'll define this
+          conversation: session.messages.map((msg: any) => ({
+            speaker: msg.messageFrom === "bot" ? "Bot" : "Customer",
+            message: msg.content,
+          })),
+        }));
+
+        setSelectedSessions(formattedSessions);
+        setIsSessionModalOpen(true);
+      } else {
+        console.error("Error fetching call sessions", statusRes.status);
+      }
+    } catch (err) {
+      console.error("Polling error:", err);
+    }
+  };
+
+  const formatDuration = (durationInSeconds: string) => {
+    const totalSeconds = parseInt(durationInSeconds, 10);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -187,7 +249,7 @@ const ContactList: React.FC<Props> = ({
           >
             Add Number
           </Button>
-          <Upload
+          {/* <Upload
             accept=".csv"
             showUploadList={false}
             customRequest={handleCSVUpload}
@@ -198,104 +260,61 @@ const ContactList: React.FC<Props> = ({
             >
               Upload CSV
             </Button>
-          </Upload>
+          </Upload> */}
         </div>
       </div>
 
-      <table className="w-full text-sm table-fixed">
-        <thead>
-          <tr className="text-left text-gray-500 border-b">
-            <th className="py-2 w-[160px]">Name</th>
-            <th className="w-[140px]">Phone Number</th>
-            <th className="w-[120px]">Upload Date</th>
-            <th className="w-[100px]">Status</th>
-            <th className="w-[320px]">Pitch</th>
-            <th className="w-[50px] text-center">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {numbers.map((entry, idx) => (
-            <tr key={idx} className="border-b hover:bg-gray-50">
-              <td className="py-2 truncate">{entry.name}</td>
-              <td className="truncate">{entry.phone}</td>
-              <td className="truncate">{entry.date}</td>
-              <td>
-                <Badge
-                  status={entry.status === "New" ? "processing" : "default"}
-                  text={entry.status}
-                />
-              </td>
-              <td className="truncate">
-                {entry.pitch || productPitches[selectedProduct]}
-              </td>
-              <td className="text-center">
-                <Tooltip title="Call">
-                  <PhoneOutlined
-                    className="cursor-pointer mr-3"
-                    style={{ color: "green" }}
-                    onClick={() => {
-                      // Start the call flow
-                      setCurrentCall({
-                        name: entry.name,
-                        phone: entry.phone,
-                        status: "initiated",
-                      });
-                    }}
-                  />
-                </Tooltip>
-
-                <Tooltip title="View Sessions">
-                  <EyeOutlined
-                    className="cursor-pointer"
-                    style={{ color: "#1d4ed8" }}
-                    onClick={() => {
-                      // Mock sessions data - replace with actual data in production
-                      const mockSessions = [
-                        {
-                          id: "1",
-                          date: "2023-11-15",
-                          status: "Completed",
-                          duration: "5:23",
-                          conversation: [
-                            {
-                              speaker: "Agent",
-                              message: "Hello! How can I help you today?",
-                              timestamp: "14:30:00",
-                            },
-                            {
-                              speaker: "Customer",
-                              message: "I'm interested in your services",
-                              timestamp: "14:30:15",
-                            },
-                          ],
-                        },
-                        {
-                          id: "2",
-                          date: "2023-11-14",
-                          status: "Failed",
-                          duration: "1:05",
-                          conversation: [
-                            {
-                              speaker: "Agent",
-                              message: "Good morning! How may I assist you?",
-                              timestamp: "10:15:00",
-                            },
-                          ],
-                        },
-                      ];
-
-                      setSelectedPhoneNumber(entry);
-                      setSelectedSessions(mockSessions);
-                      setIsSessionModalOpen(true);
-                    }}
-                  />
-                </Tooltip>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {numbers.length > 0 && (
+        <div className="w-full h-32 overflow-y-scroll">
+          <table className="w-full text-sm table-fixed">
+            <thead className="table-fixed">
+              <tr className="text-left text-gray-500 border-b">
+                <th className="py-2 w-[160px]">Name</th>
+                <th className="w-[140px]">Phone Number</th>
+                <th className="w-[120px]">Upload Date</th>
+                <th className="w-[100px]">Status</th>
+                <th className="w-[320px]">Pitch</th>
+                <th className="w-[50px] text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {numbers.map((entry, idx) => (
+                <tr key={idx} className="border-b hover:bg-gray-50">
+                  <td className="py-2 truncate">{entry.name}</td>
+                  <td className="truncate">{entry.phoneNumber}</td>
+                  <td className="truncate">{entry.createdAt}</td>
+                  <td>
+                    <Badge
+                      status={entry.status === "NEW" ? "processing" : "default"}
+                      text={entry.status.toLowerCase()}
+                    />
+                  </td>
+                  <td className="truncate">{entry.pitch || editedPitch}</td>
+                  <td className="text-center">
+                    <Tooltip title="Call">
+                      <PhoneOutlined
+                        className="cursor-pointer mr-3"
+                        style={{ color: "green" }}
+                        onClick={() => initiateCall(entry)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="View Sessions">
+                      <EyeOutlined
+                        className="cursor-pointer"
+                        style={{ color: "#1d4ed8" }}
+                        onClick={() => {
+                          setSelectedPhoneNumber(entry);
+                          handleGetSessions(entry.phoneNumber); // pass the phone number here
+                        }}
+                      />
+                    </Tooltip>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <Modal
         title="Add Phone Number"
@@ -315,23 +334,21 @@ const ContactList: React.FC<Props> = ({
           />
           <Input
             placeholder="Phone"
-            value={newContact.phone}
+            value={newContact.phoneNumber}
             onChange={(e) =>
-              setNewContact({ ...newContact, phone: e.target.value })
+              setNewContact({ ...newContact, phoneNumber: e.target.value })
             }
             style={{ borderColor: "#334155" }}
           />
         </div>
       </Modal>
 
-      {/* Sessions Modal */}
-
       {selectedPhoneNumber && (
         <SessionList
           sessions={selectedSessions}
           isOpen={isSessionModalOpen}
           onClose={() => setIsSessionModalOpen(false)}
-          phoneNumber={selectedPhoneNumber.phone}
+          phoneNumber={selectedPhoneNumber.createdAt}
           contactName={selectedPhoneNumber.name}
         />
       )}
@@ -341,6 +358,7 @@ const ContactList: React.FC<Props> = ({
           name={currentCall.name}
           phone={currentCall.phone}
           callType={currentCall.status}
+          duration={currentCall.duration}
           onClose={() => setCurrentCall(null)}
         />
       )}
