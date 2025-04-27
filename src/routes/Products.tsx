@@ -109,7 +109,7 @@ const Products = () => {
     }
     try {
       await apiClient.post(TEST_ROUTES.ADD_CONTACT, {
-        phoneNumber: entry.phoneNumber,
+        phoneNumber: `+91${entry.phoneNumber}`,
         name: entry.name,
         company: selectedProductId,
       });

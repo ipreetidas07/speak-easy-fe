@@ -5,6 +5,7 @@ import SessionList from "./SessionList";
 import { CallStatus, CallType } from "./CallStatus";
 import { TEST_ROUTES } from "../../api/routes/test.routes";
 import apiClient from "../../api/apiClient";
+import { removeCountryCode } from "../../utils/DateUtils";
 
 export type PhoneNumber = {
   updatedAt?: string | number | Date;
@@ -13,6 +14,7 @@ export type PhoneNumber = {
   createdAt: string;
   status: string;
   pitch?: string;
+  intent?: string;
 };
 
 type Props = {
@@ -129,7 +131,7 @@ const ContactList: React.FC<Props> = ({
 
       const response = await apiClient.post(TEST_ROUTES.MAKE_CALL, {
         phoneNumber: entry.phoneNumber,
-        message: "Hello, this is your AI assistant!",
+        message: editedPitch,
       });
 
       if (response.status === 200) {
@@ -280,12 +282,32 @@ const ContactList: React.FC<Props> = ({
             <tbody>
               {numbers.map((entry, idx) => (
                 <tr key={idx} className="border-b hover:bg-gray-50">
-                  <td className="py-2 truncate">{entry.name}</td>
-                  <td className="truncate">{entry.phoneNumber}</td>
+                  <td className="py-2 truncate">
+                    {entry.intent === "interested" && (
+                      <Tooltip title="Interested">👍 </Tooltip>
+                    )}
+                    {entry.intent === "not_interested" && (
+                      <Tooltip title="Not Interested">👎 </Tooltip>
+                    )}
+                    {entry.intent === "neutral" && (
+                      <Tooltip title="Neutral">😐 </Tooltip>
+                    )}
+                    {entry.name}
+                  </td>
+                  <td className="truncate">
+                    {removeCountryCode(entry.phoneNumber)}
+                  </td>
                   <td className="truncate">{entry.createdAt}</td>
                   <td>
                     <Badge
-                      status={entry.status === "NEW" ? "processing" : "default"}
+                      status={
+                        entry.status === "NEW"
+                          ? "processing"
+                          : entry.status === "busy" ||
+                            entry.status === "no-answer"
+                          ? "warning"
+                          : "success"
+                      }
                       text={entry.status.toLowerCase()}
                     />
                   </td>

@@ -30,3 +30,10 @@ export const getStartAndEndDate = (filter: string) => {
     endDate: endDate.toISOString(),
   };
 };
+
+export function removeCountryCode(phoneNumber: string) {
+  if (phoneNumber.startsWith("+91")) {
+    return phoneNumber.slice(3).trim();
+  }
+  return phoneNumber.trim();
+}

@@ -3,6 +3,7 @@ import {
   CloseCircleOutlined,
   ClockCircleOutlined,
 } from "@ant-design/icons";
+import { removeCountryCode } from "../../utils/DateUtils";
 
 export type ActivityType = {
   title: string;
@@ -83,7 +84,8 @@ export const RecentActivities = ({
                 <div>
                   <p className="font-medium">{activity.title}</p>
                   <p className="text-sm text-gray-500">
-                    {activity.description} - {activity.number}
+                    {activity.description} -{" "}
+                    {removeCountryCode(activity.number)}
                   </p>
                 </div>
               </div>
