@@ -155,6 +155,18 @@ const Products = () => {
       console.log("Failed to save pitch");
     }
   };
+  const handleUpdateProduct = async (name: string,description:string) => {
+    try {
+      await apiClient.put(`${TEST_ROUTES.UPDATE_PITCH}/${productId}`, {
+        name: name,
+        description:description,
+      });
+      console.log("Product updated to server!");
+    } catch (error) {
+      console.error(error);
+      console.log("Failed to update product");
+    }
+  };
 
   const handleAddProduct = async () => {
     if (!newProductName.trim()) return;
@@ -233,6 +245,7 @@ const Products = () => {
                 isSelected={product.name === selectedProduct}
                 onSelect={() => setSelectedProduct(product.name)}
                 description={product.description}
+                onUpdateProduct={handleUpdateProduct}
               />
             ))}
           </div>
