@@ -273,10 +273,11 @@ const ContactList: React.FC<Props> = ({
           <table className="w-full text-sm table-fixed">
             <thead className="table-fixed">
               <tr className="text-left text-gray-500 border-b">
-                <th className="py-2 w-[160px]">Name</th>
-                <th className="w-[140px]">Phone Number</th>
+                <th className="py-2 w-[100px]">Name</th>
+                <th className="w-[100px]">Phone Number</th>
                 <th className="w-[120px]">Upload Date</th>
                 <th className="w-[100px]">Status</th>
+                <th className="w-[80px]">Intent</th>
                 <th className="w-[320px]">Pitch</th>
                 <th className="w-[50px] text-center">Actions</th>
               </tr>
@@ -302,27 +303,20 @@ const ContactList: React.FC<Props> = ({
                       text={capitalizeFirstLetter(entry?.status)}
                     />
                   </td>
-                  <td className="truncate">
-                    {entry.intent && (
-                      <Tooltip
-                        title={
-                          entry.intent.toLowerCase() === "interested"
-                            ? "Interested"
-                            : entry.intent.toLowerCase() === "not_interested"
-                            ? "Not Interested"
-                            : "Neutral"
-                        }
-                      >
-                        {entry.intent.toLowerCase() === "interested" ? (
-                          <>👍</>
-                        ) : entry.intent.toLowerCase() === "not_interested" ? (
-                          <>👎</>
-                        ) : (
-                          <>😐</>
-                        )}
-                      </Tooltip>
+                  <td className="font-semibold">
+                    {entry.intent ? (
+                      entry.intent.toLowerCase() === "interested" ? (
+                        <>👍 {"Interested"} </>
+                      ) : entry.intent.toLowerCase() === "not_interested" ? (
+                        <>👎 {"Not Interested"}</>
+                      ) : (
+                        <>😐 {"Neutral"}</>
+                      )
+                    ) : (
+                      <>-</>
                     )}
-
+                  </td>
+                  <td className="truncate">
                     <Tooltip title={entry.pitch || editedPitch}>
                       {entry.pitch || editedPitch}
                     </Tooltip>
