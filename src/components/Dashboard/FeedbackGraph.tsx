@@ -37,6 +37,10 @@ const FeedbackDistribution: React.FC<FeedbackDistributionProps> = ({
       count,
     })
   );
+  const maxCount = Math.max(...Object.values(feedbackDistribution));
+
+  // Create an array of numbers from 1 to maxCount
+  const ticks = Array.from({ length: maxCount }, (_, i) => i + 1);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 w-[580px] h-auto">
@@ -46,6 +50,7 @@ const FeedbackDistribution: React.FC<FeedbackDistributionProps> = ({
           <XAxis
             type="number"
             label={{ value: "Count", position: "insideBottom", dy: 10 }}
+            ticks={ticks}
           />
           <YAxis
             dataKey="rating"
@@ -57,7 +62,7 @@ const FeedbackDistribution: React.FC<FeedbackDistributionProps> = ({
               dx: -10,
             }}
           />
-          <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={18}>
+          <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={15}>
             {feedbackData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={barColors[entry.rating]} />
             ))}

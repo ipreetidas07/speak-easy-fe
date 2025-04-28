@@ -33,7 +33,7 @@ const getBackgroundClass = (callType: CallType) => {
       return "bg-red-300";
     case "not answered":
     case "no-answer":
-      return "bg-stone-400";
+      return "bg-stone-200";
     case "completed":
       return "bg-blue-300";
     case "in-progress":

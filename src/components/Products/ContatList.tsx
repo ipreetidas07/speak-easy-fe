@@ -214,10 +214,14 @@ const ContactList: React.FC<Props> = ({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mt-4">
       <div className="mb-6">
-        <label className="block text-gray-600 font-medium mb-1 text-lg">
+        <label className="block mb-1 text-lg font-semibold">
           Default Pitch for {selectedProduct}
         </label>
         <div className="flex items-center gap-2">
@@ -265,7 +269,7 @@ const ContactList: React.FC<Props> = ({
       </div>
 
       {numbers.length > 0 && (
-        <div className="w-full h-32 overflow-y-scroll">
+        <div className="w-full h-36 overflow-y-scroll">
           <table className="w-full text-sm table-fixed">
             <thead className="table-fixed">
               <tr className="text-left text-gray-500 border-b">
@@ -285,7 +289,7 @@ const ContactList: React.FC<Props> = ({
                     {removeCountryCode(entry.phoneNumber)}
                   </td>
                   <td className="truncate">{entry.createdAt}</td>
-                  <td>
+                  <td className="font-semibold">
                     <Badge
                       status={
                         entry.status.toLocaleLowerCase() === "new"
@@ -295,7 +299,7 @@ const ContactList: React.FC<Props> = ({
                           ? "warning"
                           : "success"
                       }
-                      text={entry.status.toLowerCase()}
+                      text={capitalizeFirstLetter(entry?.status)}
                     />
                   </td>
                   <td className="truncate">

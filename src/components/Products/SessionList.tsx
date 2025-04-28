@@ -68,7 +68,7 @@ const SessionList: React.FC<Props> = ({
     const interval = setInterval(() => {
       setDisplayedSummary((prev) => prev + summaryText[index]);
       index++;
-      if (index >= summaryText.length) {
+      if (index >= summaryText.length - 1) {
         clearInterval(interval);
       }
     }, 30); // faster typing 30ms per letter (feel free to adjust)

@@ -70,7 +70,7 @@ export const RecentActivities = ({
     <div className="mt-5 bg-white rounded-lg p-4 shadow">
       <h3 className="text-lg font-semibold mb-4">Recent Activities</h3>
 
-      <div className="max-h-24 overflow-y-auto pr-2">
+      <div className="max-h-28 overflow-y-auto pr-2">
         <ul>
           {filteredActivities.map((activity, index) => (
             <li
