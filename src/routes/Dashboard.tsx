@@ -77,11 +77,11 @@ const Dashboard = () => {
                 value: data.distribution.successful,
                 color: "#4F46E5",
               },
-              {
-                name: "Failed Calls",
-                value: data.distribution.failed,
-                color: "#EF4444",
-              },
+              // {
+              //   name: "Failed Calls",
+              //   value: data.distribution.failed,
+              //   color: "#EF4444",
+              // },
               {
                 name: "Missed Calls",
                 value: data.distribution.missed,
