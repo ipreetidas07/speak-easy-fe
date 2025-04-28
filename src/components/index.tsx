@@ -6,6 +6,7 @@ import ProductCard from "./Products/ProductCard";
 import { RecentActivities } from "./Products/RecentActivities";
 import ContactList from "./Products/ContatList";
 import AddProductCard from "./Products/AddProductCard";
+import FeedbackDistribution from "./Dashboard/FeedbackGraph";
 
 export const Components = {
   Header,
@@ -16,4 +17,5 @@ export const Components = {
   RecentActivities,
   ContactList,
   AddProductCard,
+  FeedbackDistribution,
 };

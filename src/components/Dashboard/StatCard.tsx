@@ -57,7 +57,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change }) => {
 
   return (
     <div
-      className={`flex flex-col justify-between rounded-xl bg-white p-4 shadow-sm border-l-[4px] w-64 h-320 ${config.borderColor}`}
+      className={`flex flex-col justify-between rounded-xl bg-white p-4 shadow-sm border-l-[4px] w-64 h-28 ${config.borderColor}`}
     >
       <div className="flex justify-between items-start">
         <div className="text-lg text-gray-500 font-bold">{title}</div>

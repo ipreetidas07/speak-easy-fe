@@ -23,8 +23,8 @@ type Props = {
   // onUpload: (entries: PhoneNumber[]) => void;
   selectedProduct: string;
   defaultPitchPerProduct?: string | undefined;
-  onSavePitch: (pitch: string) => void; // <- new callback
-  callInitiated: () => void; // <- new callback
+  onSavePitch: (pitch: string) => void;
+  handleCallCard: () => void;
 };
 
 const ContactList: React.FC<Props> = ({
@@ -34,7 +34,7 @@ const ContactList: React.FC<Props> = ({
   selectedProduct,
   defaultPitchPerProduct,
   onSavePitch,
-  callInitiated,
+  handleCallCard,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newContact, setNewContact] = useState({ name: "", phoneNumber: "" });
@@ -156,8 +156,6 @@ const ContactList: React.FC<Props> = ({
               if (!FINAL_STATUSES.includes(status)) {
                 setTimeout(pollStatus, 1000);
               }
-
-              callInitiated();
             } else {
               console.error("Error fetching call status", statusRes.status);
             }
@@ -179,7 +177,6 @@ const ContactList: React.FC<Props> = ({
   const handleGetSessions = async (phoneNumber: string) => {
     try {
       const statusRes = await apiClient.get(TEST_ROUTES.GET_SESSIONS);
-      console.log(statusRes);
       if (statusRes.status === 200) {
         const sessions = statusRes.data; // your array
 
@@ -197,6 +194,7 @@ const ContactList: React.FC<Props> = ({
             speaker: msg.messageFrom === "bot" ? "Bot" : "Customer",
             message: msg.content,
           })),
+          summary: session.summary,
         }));
 
         setSelectedSessions(formattedSessions);
@@ -282,18 +280,7 @@ const ContactList: React.FC<Props> = ({
             <tbody>
               {numbers.map((entry, idx) => (
                 <tr key={idx} className="border-b hover:bg-gray-50">
-                  <td className="py-2 truncate">
-                    {entry.intent === "interested" && (
-                      <Tooltip title="Interested">👍 </Tooltip>
-                    )}
-                    {entry.intent === "not_interested" && (
-                      <Tooltip title="Not Interested">👎 </Tooltip>
-                    )}
-                    {entry.intent === "neutral" && (
-                      <Tooltip title="Neutral">😐 </Tooltip>
-                    )}
-                    {entry.name}
-                  </td>
+                  <td className="py-2 truncate">{entry.name}</td>
                   <td className="truncate">
                     {removeCountryCode(entry.phoneNumber)}
                   </td>
@@ -301,17 +288,41 @@ const ContactList: React.FC<Props> = ({
                   <td>
                     <Badge
                       status={
-                        entry.status === "NEW"
+                        entry.status.toLocaleLowerCase() === "new"
                           ? "processing"
-                          : entry.status === "busy" ||
-                            entry.status === "no-answer"
+                          : entry.status.toLocaleLowerCase() === "busy" ||
+                            entry.status.toLocaleLowerCase() === "no-answer"
                           ? "warning"
                           : "success"
                       }
                       text={entry.status.toLowerCase()}
                     />
                   </td>
-                  <td className="truncate">{entry.pitch || editedPitch}</td>
+                  <td className="truncate">
+                    {entry.intent && (
+                      <Tooltip
+                        title={
+                          entry.intent.toLowerCase() === "interested"
+                            ? "Interested"
+                            : entry.intent.toLowerCase() === "not_interested"
+                            ? "Not Interested"
+                            : "Neutral"
+                        }
+                      >
+                        {entry.intent.toLowerCase() === "interested" ? (
+                          <>👍</>
+                        ) : entry.intent.toLowerCase() === "not_interested" ? (
+                          <>👎</>
+                        ) : (
+                          <>😐</>
+                        )}
+                      </Tooltip>
+                    )}
+
+                    <Tooltip title={entry.pitch || editedPitch}>
+                      {entry.pitch || editedPitch}
+                    </Tooltip>
+                  </td>
                   <td className="text-center">
                     <Tooltip title="Call">
                       <PhoneOutlined
@@ -381,7 +392,10 @@ const ContactList: React.FC<Props> = ({
           phone={currentCall.phone}
           callType={currentCall.status}
           duration={currentCall.duration}
-          onClose={() => setCurrentCall(null)}
+          onClose={() => {
+            handleCallCard();
+            setCurrentCall(null);
+          }}
         />
       )}
     </div>

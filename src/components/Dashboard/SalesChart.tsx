@@ -41,12 +41,12 @@ type ChartsProps = {
 
 const SalesChart: React.FC<ChartsProps> = ({ pieCharts, lineCharts }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2 px-[50px] mt-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2 px-[50px] mt-2">
       {/* Pie Charts */}
       {pieCharts.map((chart, index) => (
         <div key={`pie-${index}`} className="bg-white p-4 rounded-xl shadow-sm">
-          <h2 className="text-xl font-bold mb-4">{chart.title}</h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <h2 className="text-xl font-bold mb-3">{chart.title}</h2>
+          <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie
                 data={chart.data}
@@ -77,7 +77,7 @@ const SalesChart: React.FC<ChartsProps> = ({ pieCharts, lineCharts }) => {
           className="bg-white p-4 rounded-xl shadow-sm"
         >
           <h2 className="text-xl font-bold mb-4">{chart.title}</h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={240}>
             <LineChart data={chart.data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />

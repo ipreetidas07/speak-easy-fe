@@ -28,15 +28,15 @@ const Products = () => {
     { name: string; description: string; pitch: string | undefined }[]
   >([]);
   const [productId, setProductId] = useState<string[] | undefined>();
-  const [callInitiated, setCallInitiated] = useState(false);
+  const [callDone, setCallDone] = useState(false);
 
   const handleCallInitiated = () => {
-    setCallInitiated((prev) => !prev);
+    setCallDone((prev) => !prev);
   };
 
   useEffect(() => {
     fetchProducts();
-  }, [callInitiated]);
+  }, [callDone]);
 
   const fetchProducts = async () => {
     try {
@@ -71,6 +71,7 @@ const Products = () => {
             pitch: num.pitch,
             status: num.status,
             createdAt: new Date(num.createdAt).toISOString().slice(0, 10),
+            intent: num.intent,
           }));
 
           activityMap[productName] = numbers.map((num) => ({
@@ -255,7 +256,7 @@ const Products = () => {
             productDetails.find((p) => p.name === selectedProduct)?.pitch
           }
           onSavePitch={handleSavePitch}
-          callInitiated={handleCallInitiated}
+          handleCallCard={handleCallInitiated}
         />
       )}
 

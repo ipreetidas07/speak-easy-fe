@@ -9,6 +9,7 @@ import {
 } from "@components/Dashboard/SalesChart";
 import { getStartAndEndDate } from "../utils/DateUtils";
 import { DateFilter } from "@enums/index";
+import { FeedbackDistributionProps } from "@components/Dashboard/FeedbackGraph";
 
 const Dashboard = () => {
   const [stats, setStats] = useState<StatCardProps[]>([]);
@@ -19,6 +20,9 @@ const Dashboard = () => {
     DateFilter.LAST_7_DAYS
   );
   const [selectedProduct, setSelectedProduct] = useState("All");
+  const [feedback, setFeedback] = useState<
+    FeedbackDistributionProps | undefined
+  >();
 
   useEffect(() => {
     fetchDashboardOverview();
@@ -32,7 +36,7 @@ const Dashboard = () => {
         params: {
           startDate,
           endDate,
-          company:selectedProduct,
+          company: selectedProduct,
         },
       });
 
@@ -100,6 +104,8 @@ const Dashboard = () => {
             })),
           },
         ]);
+
+        setFeedback(data);
       }
     } catch (error) {
       console.error("Error fetching dashboard overview:", error);
@@ -117,16 +123,22 @@ const Dashboard = () => {
         products={product}
         onFilterChange={handleFilterChange}
       />
-      <div className="flex justify-around p-4">
-        {stats.map((stat, index) => (
-          <Components.StatCard key={index} {...stat} />
-        ))}
+      <div className="flex gap-11 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 pl-[60px]">
+          {stats.map((stat, index) => (
+            <Components.StatCard key={index} {...stat} />
+          ))}
+        </div>
+        {feedback && (
+          <Components.FeedbackDistribution
+            feedbackDistribution={feedback.feedbackDistribution}
+          />
+        )}
       </div>
       <Components.SalesChart
         pieCharts={pieChartData}
         lineCharts={lineChartData}
       />
-      {/* <Components.RecentActivity /> */}
     </div>
   );
 };

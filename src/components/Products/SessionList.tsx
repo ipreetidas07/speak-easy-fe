@@ -1,5 +1,5 @@
-import { Modal, List, Typography } from "antd";
-import { useState } from "react";
+import { Modal, List, Typography, Button } from "antd";
+import { useState, useEffect } from "react";
 
 type Session = {
   id: string;
@@ -11,6 +11,7 @@ type Session = {
     message: string;
     timestamp: string;
   }>;
+  summary: string;
 };
 
 type Props = {
@@ -29,38 +30,80 @@ const SessionList: React.FC<Props> = ({
   contactName,
 }) => {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [summaryText, setSummaryText] = useState<string>("");
+  const [displayedSummary, setDisplayedSummary] = useState<string>("");
 
   const handleSessionClick = (session: Session) => {
     setSelectedSession(session);
+    setSummaryText(""); // clear summary when opening messages
+    setDisplayedSummary("");
   };
 
   const handleBackToSessions = () => {
     setSelectedSession(null);
+    setSummaryText("");
+    setDisplayedSummary("");
   };
 
-  const handleClsoe = () => {
+  const handleClose = () => {
     setSelectedSession(null);
+    setSummaryText("");
+    setDisplayedSummary("");
     onClose();
   };
+
+  const handleSummarize = () => {
+    if (!selectedSession?.summary) return;
+    setSummaryText(selectedSession.summary);
+    setDisplayedSummary("");
+  };
+
+  // Typing animation effect
+  useEffect(() => {
+    if (!summaryText) return;
+
+    let index = 0;
+    setDisplayedSummary("");
+
+    const interval = setInterval(() => {
+      setDisplayedSummary((prev) => prev + summaryText[index]);
+      index++;
+      if (index >= summaryText.length) {
+        clearInterval(interval);
+      }
+    }, 30); // faster typing 30ms per letter (feel free to adjust)
+
+    return () => clearInterval(interval);
+  }, [summaryText]);
+
   return (
     <Modal
       title={
         selectedSession ? (
-          <div className="flex items-center gap-2">
-            <span
-              onClick={handleBackToSessions}
-              className="cursor-pointer text-[#1e293b] text-2xl"
-            >
-              ←
-            </span>
-            <span>Conversation Details - {contactName}</span>
+          <div className="flex justify-between pr-8 items-center">
+            <div className="flex items-center gap-2">
+              <span
+                onClick={handleBackToSessions}
+                className="cursor-pointer text-[#1e293b] text-2xl"
+              >
+                ←
+              </span>
+              <span>Conversation Details - {contactName}</span>
+            </div>
+            {selectedSession.summary && !displayedSummary && (
+              <div className="flex flex-col items-center">
+                <Button type="primary" onClick={handleSummarize}>
+                  Summarize Conversation
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           `Sessions for ${contactName} (${phoneNumber})`
         )
       }
       open={isOpen}
-      onCancel={handleClsoe}
+      onCancel={handleClose}
       footer={null}
       width={800}
     >
@@ -79,9 +122,9 @@ const SessionList: React.FC<Props> = ({
                       <span>Session {session.id}</span>
                       <Typography.Text
                         type={
-                          session.status === "Completed"
+                          session.status.toLowerCase() === "completed"
                             ? "success"
-                            : session.status === "Busy"
+                            : session.status.toLowerCase() === "busy"
                             ? "danger"
                             : "warning"
                         }
@@ -101,34 +144,51 @@ const SessionList: React.FC<Props> = ({
             )}
           />
         ) : (
-          <List
-            className="conversation-list"
-            dataSource={selectedSession.conversation}
-            renderItem={(message) => (
-              <List.Item
-                className={`flex ${
-                  message.speaker === "Agent" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[70%] rounded-lg p-3 ${
-                    message.speaker === "Agent" ? "bg-blue-100" : "bg-gray-100"
-                  }`}
-                >
-                  <div className="font-semibold text-sm mb-1">
-                    {message.speaker}
-                  </div>
-                  <div className="text-gray-800">{message.message}</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {message.timestamp}
-                  </div>
-                </div>
-              </List.Item>
+          <>
+            {!displayedSummary && (
+              <div>
+                <List
+                  className="conversation-list"
+                  dataSource={selectedSession.conversation}
+                  renderItem={(message) => (
+                    <List.Item
+                      className={`flex ${
+                        message.speaker === "Agent"
+                          ? "justify-end"
+                          : "justify-start"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[70%] rounded-lg p-3 ${
+                          message.speaker === "Agent"
+                            ? "bg-blue-100"
+                            : "bg-gray-100"
+                        }`}
+                      >
+                        <div className="font-semibold text-sm mb-1">
+                          {message.speaker}
+                        </div>
+                        <div className="text-gray-800">{message.message}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {message.timestamp}
+                        </div>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </div>
             )}
-          />
+            {displayedSummary && (
+              <div className="mt-4 bg-gray-100 p-4 rounded-md text-sm w-full whitespace-pre-line">
+                {displayedSummary}
+                <span className="animate-pulse">|</span>
+              </div>
+            )}
+          </>
         )}
       </div>
     </Modal>
   );
 };
+
 export default SessionList;

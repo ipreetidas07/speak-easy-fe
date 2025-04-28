@@ -2,8 +2,6 @@
 
 Frontend for the **Speak Easy** project — an AI-powered voice assistant for smart outreach and automated calling, built with modern web technologies.
 
----
-
 ## 🚀 Tech Stack
 
 - ⚡ **[Vite]** – Fast build tool for modern frontend
