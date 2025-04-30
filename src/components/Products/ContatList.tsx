@@ -293,10 +293,10 @@ const ContactList: React.FC<Props> = ({
                   <td className="font-semibold">
                     <Badge
                       status={
-                        entry.status.toLocaleLowerCase() === "new"
+                        entry.status.toLowerCase() === "new"
                           ? "processing"
-                          : entry.status.toLocaleLowerCase() === "busy" ||
-                            entry.status.toLocaleLowerCase() === "no-answer"
+                          : entry.status.toLowerCase() === "busy" ||
+                            entry.status.toLowerCase() === "no-answer"
                           ? "warning"
                           : "success"
                       }
@@ -305,9 +305,11 @@ const ContactList: React.FC<Props> = ({
                   </td>
                   <td className="font-semibold">
                     {entry.intent ? (
-                      entry.intent.toLowerCase() === "interested" ? (
+                      entry.intent.toLowerCase() == "interested" ||
+                      entry.intent.toLowerCase() == "positive" ? (
                         <>👍 {"Interested"} </>
-                      ) : entry.intent.toLowerCase() === "not_interested" ? (
+                      ) : entry.intent.toLowerCase() == "not_interested" ||
+                        entry.intent.toLowerCase() == "negative" ? (
                         <>👎 {"Not Interested"}</>
                       ) : (
                         <>😐 {"Neutral"}</>

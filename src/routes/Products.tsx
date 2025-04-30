@@ -221,6 +221,7 @@ const Products = () => {
               onChange={(e) => setNewProductDescription(e.target.value)}
               placeholder="Enter product description"
               className="border p-2 w-full rounded mb-6"
+              rows={10}
             />
             <div className="flex justify-center">
               <button
